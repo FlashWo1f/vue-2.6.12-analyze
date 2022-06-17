@@ -121,6 +121,7 @@ const builds = {
   },
   // Runtime+compiler development build (Browser)
   'web-full-dev': {
+    // npm run dev 入口文件
     entry: resolve('web/entry-runtime-with-compiler.js'),
     dest: resolve('dist/vue.js'),
     format: 'umd',

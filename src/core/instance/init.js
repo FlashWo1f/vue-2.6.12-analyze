@@ -29,6 +29,7 @@ export function initMixin (Vue: Class<Component>) {
     // a flag to avoid this being observed
     vm._isVue = true
     // merge options
+    // 1. 合并选项：用户选项和系统默认选项合并
     if (options && options._isComponent) {
       // optimize internal component instantiation
       // since dynamic options merging is pretty slow, and none of the
@@ -48,10 +49,12 @@ export function initMixin (Vue: Class<Component>) {
       vm._renderProxy = vm
     }
     // expose real self
+    // 2. 初始化
     vm._self = vm
-    initLifecycle(vm)
+    initLifecycle(vm) // 一个组件诞生需要初始化的东西: 父组件是谁 root 是谁 children 有哪些 refs 有哪些 这些属性初始化好
     initEvents(vm)
     initRender(vm)
+    // callHook 调用声明周期
     callHook(vm, 'beforeCreate')
     initInjections(vm) // resolve injections before data/props
     initState(vm)
