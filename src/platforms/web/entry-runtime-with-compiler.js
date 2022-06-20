@@ -14,7 +14,7 @@ const idToTemplate = cached(id => {
   return el && el.innerHTML
 })
 
-// 扩展 $mount 
+// 扩展 $mount 在执行公用的 mount 方法执行前扩展当前环境（runtime with compiler），生成 render 方法挂载到 Options 上
 const mount = Vue.prototype.$mount
 Vue.prototype.$mount = function (
   el?: string | Element,

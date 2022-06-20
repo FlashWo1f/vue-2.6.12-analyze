@@ -711,6 +711,7 @@ export function createPatchFunction (backend) {
       isInitialPatch = true
       createElm(vnode, insertedVnodeQueue)
     } else {
+      // 如果有 nodeType 那就是真实 DOM
       const isRealElement = isDef(oldVnode.nodeType)
       if (!isRealElement && sameVnode(oldVnode, vnode)) {
         // patch existing root node
@@ -744,7 +745,9 @@ export function createPatchFunction (backend) {
         }
 
         // replacing existing element
+        // 当前宿主元素 app
         const oldElm = oldVnode.elm
+        // 宿主元素父亲 body  用来 body.appendChild
         const parentElm = nodeOps.parentNode(oldElm)
 
         // create new node
@@ -755,7 +758,7 @@ export function createPatchFunction (backend) {
           // leaving transition. Only happens when combining transition +
           // keep-alive + HOCs. (#4590)
           oldElm._leaveCb ? null : parentElm,
-          nodeOps.nextSibling(oldElm)
+          nodeOps.nextSibling(oldElm) // 放到 app 阶段的旁边 —— 完全相同的但解析过的 app 模板
         )
 
         // update parent placeholder node element, recursively
@@ -788,7 +791,8 @@ export function createPatchFunction (backend) {
           }
         }
 
-        // destroy old node
+        // destroy old node  删除老节点
+        // 一次性更新节点放入树，再删除老节点的效率比一个个节点对比更新要好很多
         if (isDef(parentElm)) {
           removeVnodes([oldVnode], 0, 0)
         } else if (isDef(oldVnode.tag)) {

@@ -52,12 +52,14 @@ export function initMixin (Vue: Class<Component>) {
     // 2. 初始化
     vm._self = vm
     initLifecycle(vm) // 一个组件诞生需要初始化的东西: 父组件是谁 root 是谁 children 有哪些 refs 有哪些 这些属性初始化好
-    initEvents(vm)
-    initRender(vm)
+    // <comp @my-click="onclick"></comp>
+    initEvents(vm) // 自定义组件时间监听: 一般来说事件的 on 和 emit 是同一个对象处理的，但 Vue 组件的 on 是父组件 emit 是组组件 所以这里要做处理
+    initRender(vm) // 做了两件事 1. 插槽的处理 2. $createEle === h 函数
     // callHook 调用声明周期
     callHook(vm, 'beforeCreate')
+    // 以下：组件数据和状态初始化
     initInjections(vm) // resolve injections before data/props
-    initState(vm)
+    initState(vm) // data/props/watch/computed... 选项初始化
     initProvide(vm) // resolve provide after data/props
     callHook(vm, 'created')
 
