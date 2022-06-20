@@ -41,9 +41,11 @@ export class Observer {
 
   constructor (value: any) {
     this.value = value
+    // 这里 dep 实例的目的：如果使用 Vue.set/delete 添加或者删除属性，负责通知更新
     this.dep = new Dep()
     this.vmCount = 0
     def(value, '__ob__', this)
+    // 1. 分辨传入对象类型
     if (Array.isArray(value)) {
       if (hasProto) {
         protoAugment(value, arrayMethods)
@@ -111,7 +113,9 @@ export function observe (value: any, asRootData: ?boolean): Observer | void {
   if (!isObject(value) || value instanceof VNode) {
     return
   }
+  // Observer: 将传入对象响应化
   let ob: Observer | void
+  // 如果已经做过响应式处理，则直接返回 ob
   if (hasOwn(value, '__ob__') && value.__ob__ instanceof Observer) {
     ob = value.__ob__
   } else if (
@@ -139,6 +143,7 @@ export function defineReactive (
   customSetter?: ?Function,
   shallow?: boolean
 ) {
+  // 创建与 key 一一对应的 dep
   const dep = new Dep()
 
   const property = Object.getOwnPropertyDescriptor(obj, key)
@@ -153,16 +158,23 @@ export function defineReactive (
     val = obj[key]
   }
 
+  // 递归遍历
   let childOb = !shallow && observe(val)
   Object.defineProperty(obj, key, {
     enumerable: true,
     configurable: true,
     get: function reactiveGetter () {
+      // 下面 Vue2 收集依赖处理性能消耗相对是较大的 后面 Vue3 有用 Proxy 做优化，叫浅代理
       const value = getter ? getter.call(obj) : val
+      // 如果存在，说明此次调用触发者是一个 Watcher 实例
+      // dep m : n watcher m 对 n 数量关系
       if (Dep.target) {
+        // 建立 dep 和 Dep.target 之间依赖关系
         dep.depend()
         if (childOb) {
+          // childOb.dep 是 Observer 里的 dep，这里依赖收集就是为了 Observer.dep 注释所说的 监听 set/delete 属性时的更新
           childOb.dep.depend()
+          // 如果是数组，数组内部所有项都要做相同处理 数组项也可能是对象/数组
           if (Array.isArray(value)) {
             dependArray(value)
           }
