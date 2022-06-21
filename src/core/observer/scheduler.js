@@ -66,7 +66,7 @@ if (inBrowser && !isIE) {
 }
 
 /**
- * Flush both queues and run the watchers.
+ * Flush both queues and run the watchers. 执行所有 watcher 的 run 函数
  */
 function flushSchedulerQueue () {
   currentFlushTimestamp = getNow()
@@ -161,11 +161,14 @@ function callActivatedHooks (queue) {
  * Jobs with duplicate IDs will be skipped unless it's
  * pushed when the queue is being flushed.
  */
+// 将 watcher 传入队
 export function queueWatcher (watcher: Watcher) {
   const id = watcher.id
+  // 去重
   if (has[id] == null) {
     has[id] = true
     if (!flushing) {
+      // 还没有执行 就入队
       queue.push(watcher)
     } else {
       // if already flushing, splice the watcher based on its id
@@ -184,6 +187,8 @@ export function queueWatcher (watcher: Watcher) {
         flushSchedulerQueue()
         return
       }
+      // 如果没在等, 异步启动 flush 任务
+      // 启动一个异步任务,在未来的某个时刻执行 flushSchedulerQueue
       nextTick(flushSchedulerQueue)
     }
   }

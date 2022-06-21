@@ -165,11 +165,13 @@ export default class Watcher {
    */
   update () {
     /* istanbul ignore else */
+    // computed 属性
     if (this.lazy) {
       this.dirty = true
     } else if (this.sync) {
       this.run()
     } else {
+      // 正常情况走这里 —— watcher 入队
       queueWatcher(this)
     }
   }
@@ -181,6 +183,7 @@ export default class Watcher {
   run () {
     if (this.active) {
       const value = this.get()
+      // user watcher
       if (
         value !== this.value ||
         // Deep watchers and watchers on Object/Arrays should fire even

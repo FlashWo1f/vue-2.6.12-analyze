@@ -44,6 +44,7 @@ export default class Dep {
       subs.sort((a, b) => a.id - b.id)
     }
     for (let i = 0, l = subs.length; i < l; i++) {
+      // 将其依赖的 watcher 执行 update 方法
       subs[i].update()
     }
   }

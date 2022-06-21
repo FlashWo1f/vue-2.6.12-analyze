@@ -86,6 +86,7 @@ if (typeof Promise !== 'undefined' && isNative(Promise)) {
 
 export function nextTick (cb?: Function, ctx?: Object) {
   let _resolve
+  // 封装一个能够处理错误的高阶函数 并存入 callbacks 数组
   callbacks.push(() => {
     if (cb) {
       try {
